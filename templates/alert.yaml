@@ -1,0 +1,75 @@
+groups:
+- name: {{ project_name }}-{{ instance_id }}
+  rules:
+{% if cpu_value != None %}
+  - alert: Cpu_Usage_is_More_than_{{ cpu_value }}
+    expr: (avg by (domain) (irate(libvirt_domain_info_cpu_time_seconds_total{instanceId=~"{{ instance_id }}"}[30s])) * 100 ) / on() group_right() (libvirt_domain_info_virtual_cpus{instanceId=~"{{ instance_id }}"}-0) > {{ cpu_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Host out of cpu  (instance {{ '{{ $labels.instance }}' }})
+      description: "Cpu Usage  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+{% if memory_value != None %}
+  - alert: Memory_Usage_is_More_than_{{ memory_value }}
+    expr: 100 - libvirt_domain_stat_memory_unused_bytes{instanceId=~"{{ instance_id }}"} / libvirt_domain_info_maximum_memory_bytes{instanceId=~"{{ instance_id }}"} *  100 > {{ memory_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Host out of Memory  (instance {{ '{{ $labels.instanceId }}' }})
+      description: "Memory Usage  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+{% if network_receive_value != None %}
+  - alert: Network_Recieve_Bytes_More_than_{{ network_receive_value }}
+    expr: rate(libvirt_domain_interface_stats_receive_bytes_total{instanceId=~"{{ instance_id }}"}[30s]) > {{ network_receive_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Network Receive Bytes is High (instance {{ '{{ $labels.instanceId }}' }})
+      description: " Network Receive Bytes  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+{% if network_transmit_value != None %}
+  - alert: Network_Transmit_Bytes_More_than_{{ network_transmit_value }}
+    expr: rate(libvirt_domain_interface_stats_transmit_bytes_total{instanceId=~"{{ instance_id }}"}[30s]) > {{ network_transmit_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Network Transmit Bytes is High (instance {{ '{{ $labels.instanceId }}' }})
+      description: " Network Transmit Bytes  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+{% if iops_read_value != None %}
+  - alert: Disk_IOPS_Read_More_than_{{ iops_read_value }}
+    expr: rate(libvirt_domain_block_stats_read_requests_total{instanceId=~"{{ instance_id }}"}[30s]) > {{ iops_read_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Disk IOPS Read is High (instance {{ '{{ $labels.instanceId }}' }})
+      description: "Disk IOPS Read  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+{% if iops_write_value != None %}
+  - alert: Disk_IOPS_Write_More_than_{{ iops_write_value }}
+    expr: rate(libvirt_domain_block_stats_write_requests_total{instanceId=~"{{ instance_id }}"}[30s]) > {{ iops_write_value }}
+    for: 1m
+    labels:
+      severity: Critical
+      service: instance_alerts
+    annotations:
+      summary: Disk IOPS write is High (instance {{ '{{ $labels.instanceId }}' }})
+      description: "Disk IOPS write  VALUE = {{ '{{ $value }}' }} on instance = {{ '{{ $labels.instanceId }}' }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}

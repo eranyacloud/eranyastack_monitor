@@ -1,0 +1,58 @@
+groups:
+- name: KUBERNETES-{{ nodegroup_id }}
+  rules:
+{% if cpu_min != None %}
+  - alert: Avg_ClusterNodes_Cpu_Usage_is_less_than_{{ cpu_min }}
+    expr: avg((irate(libvirt_domain_info_cpu_time_seconds_total{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"}[30s]))*100 / libvirt_domain_info_virtual_cpus{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} ) < {{ cpu_min }}
+    for: {{ check_time }}
+    labels:
+      service: kubernetes_alerts
+      resource: cpu
+      nodegroup: {{ nodegroup_id }}
+    annotations:
+      summary: Avg_ClusterNodes_Cpu_Usage_is_less_than_{{ cpu_min }}
+      description: "Cpu Usage  VALUE = {{ '{{ $value }}' }} on Nodegroup = {{ nodegroup_id }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+
+{% if cpu_max != None %}
+  - alert: Avg_ClusterNodes_Cpu_Usage_is_more_than_{{ cpu_max }}
+    expr: avg((irate(libvirt_domain_info_cpu_time_seconds_total{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"}[30s]))*100 / libvirt_domain_info_virtual_cpus{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} ) > {{ cpu_max }}
+    for: {{ check_time }}
+    labels:
+      service: kubernetes_alerts
+      resource: cpu
+      nodegroup: {{ nodegroup_id }}
+    annotations:
+      summary: Avg_ClusterNodes_Cpu_Usage_is_more_than_{{ cpu_max }}
+      description: "Cpu Usage  VALUE = {{ '{{ $value }}' }} on Nodegroup = {{ nodegroup_id }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+
+{% if memory_min != None %}
+  - alert: Avg_ClusterNodes_Memory_Usage_is_less_than_{{ memory_min }}
+    expr: 100 - avg((libvirt_domain_stat_memory_usable_bytes{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} / libvirt_domain_info_maximum_memory_bytes{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} * 100 )) < {{ memory_min }}
+    for: {{ check_time }}
+    labels:
+      service: kubernetes_alerts
+      resource: memory
+      nodegroup: {{ nodegroup_id }}
+    annotations:
+      summary: Avg_ClusterNodes_Memory_Usage_is_less_than_{{ memory_min }}
+      description: "Memory Usage  VALUE = {{ '{{ $value }}' }} on Nodegroup = {{ nodegroup_id }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
+
+{% if memory_max != None %}
+  - alert: Avg_ClusterNodes_Memory_Usage_is_more_than_{{ memory_max }}
+    expr: 100 - avg((libvirt_domain_stat_memory_usable_bytes{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} / libvirt_domain_info_maximum_memory_bytes{instanceId=~"{% for instance in instances %}{{instance}}|{% endfor %}"} * 100 )) > {{ memory_max }}
+    for: {{ check_time }}
+    labels:
+      service: kubernetes_alerts
+      resource: memory
+      nodegroup: {{ nodegroup_id }}
+    annotations:
+      summary: Avg_ClusterNodes_Memory_Usage_is_more_than_{{ memory_max }}
+      description: "Memory Usage  VALUE = {{ '{{ $value }}' }} on Nodegroup = {{ nodegroup_id }}"
+      value: "{{ '{{ $value }}' }}"
+{% endif %}
