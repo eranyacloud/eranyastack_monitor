@@ -1,4 +1,4 @@
-# Eranyacloud Monitor (Monitoring As Service)
+# Green Monitor
 ## How to Run Project
 `uvicorn main:app --reload --host 0.0.0.0 --port 9191`
 
@@ -8,7 +8,7 @@
 Description=GreenAlert Service
 After=network.target
 [Service]
-WorkingDirectory=/opt/eranyastack_monitor
+WorkingDirectory=/opt/greenmonitor
 ExecStart=uvicorn main:app --reload --host 0.0.0.0 --port 9191
 [Install]
 WantedBy=multi-user.target

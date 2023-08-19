@@ -8,8 +8,8 @@ from fastapi.responses import  PlainTextResponse, FileResponse, JSONResponse
 import requests
 
 app = FastAPI(
-    title="GreenMonitor",
-    description="GreenWebCloud Instances Monitoring and Alerting Service",
+    title="EranyaMonitor",
+    description="EranyaCloud Instances Monitoring and Alerting Service",
     version="0.5.1",
 )
 
